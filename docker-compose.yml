@@ -1,0 +1,41 @@
+version: '2'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "8581:2181"
+  kafka:
+    image: wurstmeister/kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zk:2181
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_BROKER_ID: 1
+      ZK: zk
+    links:
+      - zookeeper:zk
+    ports:
+      - "9092:9092"
+  mysql:
+    image: mysql:5.6.34
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    volumes:
+      - /Users/didi/docker/canalx/mysql/conf:/etc/mysql/conf.d
+      - /Users/didi/docker/canalx/mysql/data:/var/lib/mysql
+    ports:
+      - "10086:3306"
+  canal:
+    image: kevin/canal
+    volumes:
+      - /Users/didi/docker/canalx/canal/conf:/tmp/canal/conf
+      - /Users/didi/docker/canalx/canal/logs:/tmp/canal/logs
+    links:
+      - mysql:db
+      - zookeeper:zk
+    ports:
+      - "11112:11111"
+    depends_on:
+      - mysql
+      - zookeeper

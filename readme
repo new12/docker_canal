@@ -1,0 +1,11 @@
+#连接到zk
+docker run --name zkcli --rm \
+--link canalx_zookeeper_1:zk \
+--net="canalx_default" \
+-it wurstmeister/zookeeper bash
+
+#初始化canal的数据库
+CREATE USER canal IDENTIFIED BY 'canal';    
+GRANT SELECT, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'canal'@'%';  
+-- GRANT ALL PRIVILEGES ON *.* TO 'canal'@'%' ;  
+FLUSH PRIVILEGES;  
