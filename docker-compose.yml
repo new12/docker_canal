@@ -12,6 +12,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zk:2181
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_BROKER_ID: 1
+      KAFKA_ADVERTISED_HOST_NAME: localhost
       ZK: zk
     links:
       - zookeeper:zk
@@ -35,7 +36,15 @@ services:
       - mysql:db
       - zookeeper:zk
     ports:
-      - "11112:11111"
+      - "11111:11111"
     depends_on:
       - mysql
       - zookeeper
+  zui:
+    image: kevin/zui
+    links:
+      - zookeeper:zk
+    depends_on:
+      - zookeeper
+    ports:
+      - "9090:9090"
